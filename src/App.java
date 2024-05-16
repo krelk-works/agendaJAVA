@@ -17,8 +17,8 @@ public class App {
             System.out.println(contact.nom+" "+contact.cognom+" "+contact.telefon+" "+contact.direccio);
         }
 
-        Contact nouContacte = new Contact("Agusti", "Perez", 685564412, "C/ Marina 254");
+        Contact nouContacte = new Contact("Reinaldo", "Gutiérrez", 645231654L, "C/ Marina 254 1º 1º");
 
-        //controlSQL.addContact(nouContacte);
+        controlSQL.addContact(nouContacte);
     }
 }
