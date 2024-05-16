@@ -8,6 +8,7 @@ import java.util.List;
 public class SQLController {
     // -------------------------------------
     Boolean debug = true;
+
     // Variables
     private String host;
     private String user;
@@ -27,12 +28,12 @@ public class SQLController {
         List<Contact> llistaContactes = new ArrayList<Contact>();
 
         // Mitjançant un try provem la connexió i retornarem una llista
-        try(Connection conn = DriverManager.getConnection(getSQL(), user, password)) {
+        try(Connection conn = DriverManager.getConnection(getSQLURL(), user, password)) {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM agenda");
             // -------------------------------------
             while(rs.next()) {
-                Contact contactToADD = new Contact(rs.getString("nom"), rs.getString("cognom"), rs.getLong("telefon"), rs.getString("direccio"));
+                Contact contactToADD = new Contact(rs.getInt("id"),rs.getString("nom"), rs.getString("cognom"), rs.getLong("telefon"), rs.getString("direccio"));
                 llistaContactes.add(contactToADD);
             }
         } catch (SQLException e) {
@@ -44,25 +45,62 @@ public class SQLController {
     public void addContact(Contact contact) {
         System.out.println("Agregando el contacto con nombre :"+contact.nom);
         // Mitjançant un try provem la connexió i retornarem una llista
-        try(Connection conn = DriverManager.getConnection(getSQL(), user, password)) {
+        try(Connection conn = DriverManager.getConnection(getSQLURL(), user, password)) {
             if (!validateContact(contact)) {
                 System.out.println("El contacte no és valid");
                 return;
             }
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("INSERT INTO agenda (nom, cognom, telefon, direccio) VALUE ('"+contact.nom+"', '"+contact.cognom+"', "+contact.telefon+", '"+contact.direccio+"')");
-            if (stmt.getUpdateCount() > 1) {
-                System.out.println("S'ha afegit correctament el contacte amb nom "+contact.nom);
+            if (debug) {
+                if (stmt.getUpdateCount() > 1) {
+                    System.out.println("[ROW AFFECTED: "+stmt.getUpdateCount()+"] S'ha afegit correctament el contacte amb nom: "+contact.nom);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private String getSQL() {
+    public void deleteContact(int id) {
+        // Mitjançant un try provem la connexió i esborrarem el contacte amb la ID
+        try(Connection conn = DriverManager.getConnection(getSQLURL(), user, password)) {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("DELETE FROM agenda WHERE id = "+id);
+            if (debug) {
+                if (stmt.getUpdateCount() > 1) {
+                    System.out.println("[ROW AFFECTED: "+stmt.getUpdateCount()+"] S'ha eliminat correctament el contacte amb ID: "+id);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateContact(Contact contact) {
+        // Mitjançant un try provem la connexió i actualitzarem el contacte amb la ID
+        try(Connection conn = DriverManager.getConnection(getSQLURL(), user, password)) {
+            if (!validateContact(contact)) {
+                System.out.println("El contacte no és valid");
+                return;
+            }
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("UPDATE agenda SET nom = '"+contact.nom+"', cognom = '"+contact.cognom+"', telefon = "+contact.telefon+", direccio = '"+contact.direccio+"' WHERE id = "+contact.id);
+            if (debug) {
+                if (stmt.getUpdateCount() > 1) {
+                    System.out.println("[ROW AFFECTED: "+stmt.getUpdateCount()+"] S'ha actualitzat correctament el contacte amb ID: "+contact.id);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getSQLURL() {
         return "jdbc:mysql://"+host+":3306/"+bd;
     }
 
+    // Métode privat per a validar els contactes
     private boolean validateContact(Contact contact) {
         // Revisem que no tinguem caràcters especials als textos (Strings). Ens assegurem que ni tingui espais en blanc ni al principi ni al final del text i que no superi la longitud màxima
         if (contact.nom.trim().matches("[a-zA-Z0-9]+") && contact.nom.length() <= 50
