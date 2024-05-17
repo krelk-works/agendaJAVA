@@ -1,4 +1,4 @@
-package Contact;
+package Contacts;
 
 public class Contact {
     public int id = 0;

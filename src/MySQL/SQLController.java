@@ -1,9 +1,10 @@
 package MySQL;
 
-import Contact.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import Contacts.*;
 
 public class SQLController {
     // -------------------------------------
