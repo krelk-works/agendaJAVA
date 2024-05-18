@@ -17,17 +17,16 @@ public class AgendaGUI {
         this.sqlController = sqlController;
 
         frame = new JFrame("Agenda");
-        
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación cuando se cierra esta ventana
-        frame.setSize(400, 500);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 600);
         frame.setLayout(new BorderLayout());
 
-        JButton agregarButton = new JButton("+ Agregar contacto");
+        JButton agregarButton = new JButton("+ Afegir contacte");
         agregarButton.setPreferredSize(new Dimension(frame.getWidth(), 40));
         agregarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AgregarContactoGUI(sqlController);
+                new AfegirContacteGUI(sqlController, AgendaGUI.this);
             }
         });
         frame.add(agregarButton, BorderLayout.NORTH);
@@ -38,31 +37,31 @@ public class AgendaGUI {
         scrollPane = new JScrollPane(contactPanel);
         frame.add(scrollPane, BorderLayout.CENTER);
 
-        actualizarListaContactos();
-        frame.setLocationRelativeTo(null); // Centra la ventana en la pantalla
+        actualitzarLlistaContactes();
+
+        // Icona d'APP
+        String fileSeparator = System.getProperty("file.separator");
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource(".."+fileSeparator+"media"+fileSeparator+"appicon.png"));
+        frame.setIconImage(icon);
+        // ------------------------------
+
         frame.setVisible(true);
     }
 
-    private void actualizarListaContactos() {
+    public void actualitzarLlistaContactes() {
         contactPanel.removeAll();
-        for (Contact contacto : sqlController.getContacts()) {
-            JButton contactoButton = new JButton(contacto.nom + " " + contacto.cognom);
-            contactoButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-            contactoButton.addActionListener(new ActionListener() {
+        for (Contact contacte : sqlController.getContacts()) {
+            JButton contacteButton = new JButton(contacte.nom + " " + contacte.cognom);
+            contacteButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+            contacteButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new ContactoDetalleGUI(contacto, sqlController);
+                    new DetallContacteGUI(contacte, sqlController, AgendaGUI.this);
                 }
             });
-            contactPanel.add(contactoButton);
+            contactPanel.add(contacteButton);
         }
         contactPanel.revalidate();
         contactPanel.repaint();
     }
-    
-    public static void main(String[] args) {
-        SQLController sqlController = new SQLController("localhost", "root", "password", "mi_base_de_datos");
-        new AgendaGUI(sqlController);
-    }
-    
 }
