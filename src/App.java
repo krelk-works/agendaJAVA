@@ -1,8 +1,5 @@
-import java.util.List;
-
-import Contacts.*;
+import GUI.*;
 import MySQL.*;
-import Finestres.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -18,10 +15,15 @@ public class App {
 
         controlSQL.addContact(nouContacte);*/
 
-        Finestra finestra = new Finestra();
-        finestra.mainMenu();
+        //Finestra finestra = new Finestra();
+        //finestra.mainMenu();
 
+        /*for (int i = 1; i < 20; i++) {
+            Contact nouContacte = new Contact("Test"+i, "Test"+i, 645231654L, "C/ Marina 254 1º 1º");
 
+            controlSQL.addContact(nouContacte);
+        }*/
         
+        new AgendaGUI(controlSQL);
     }
 }
