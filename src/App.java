@@ -5,7 +5,7 @@ import MySQL.*;
 public class App {
     public static void main(String[] args) {
         try {
-            // Afegir aqui les dades de la teva base de dades
+            // Afegir aqui les dades de la teva base de dades (No oblidis importar l'arxiu 'create_database_and_table.sql' de la carpeta mysql).
 
             SQLController controlSQL = new SQLController("localhost", "root", "", "agendaJAVA");
 
